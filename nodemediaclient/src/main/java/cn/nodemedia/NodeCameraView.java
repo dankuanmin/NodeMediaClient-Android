@@ -102,6 +102,21 @@ public class NodeCameraView extends FrameLayout implements GLSurfaceView.Rendere
     public GLSurfaceView getGLSurfaceView() {
         return mGLSurfaceView;
     }
+    
+    // TODO: Set camera to portrait
+    public static void setCameraDisplayOrientation(int cameraId, Camera camera) {
+        android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+        int degrees = 0; // portrait
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        camera.setDisplayOrientation(result);
+    }
 
     public int startPreview(int cameraId) {
         if (isStarting) return -1;
